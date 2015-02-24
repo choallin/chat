@@ -1,0 +1,51 @@
+<html>
+	<head>
+		<title>Chat</title>
+		<style type="text/css">
+			input {display: block;}
+			ul {list-style: none;}
+		</style>
+	</head>
+	<body>
+		<p>Let's chat again and over and </p>
+		<ul id="messages">
+			<form action="post" id="chatbox">
+				<textarea name="message" cols="30" rows="10"></textarea>
+				<input type="submit" value="send"/>
+			</form>
+		</ul>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				var socket = null;
+				var msgBox = $('#chatbox textarea');
+				var messages = $('#messages');
+				$('#chatbox').submit(function () {
+					if (!msgBox.val()) {
+						return false;
+					}
+					if (!socket) {
+						alert("Fehler: Keine Socket Verbindung zum Chatserver");
+						return false;
+					}
+					socket.send(msgBox.val());
+					return false;
+				});
+				if (!window["WebSocket"]) {
+					alert("Fehler: Der Browser unterstützt keine Websockets");
+				} else {
+					socket = new WebSocket("ws://{{.Host}}/room");
+					socket.onclose = function () {
+						alert("Verbindung zum Chatserver unterbrochen");
+					};
+					socket.onmessage = function (event) {
+						messages.append($("<li>").text(event.data));
+					};
+					socekt.onopen = function (ee) {
+						alert("Verbingund hergestellt");
+					}
+				}
+			});
+		</script>
+	</body>
+</html>	
