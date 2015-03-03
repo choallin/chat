@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chat/tracer"
+	"chat/trace"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,7 +15,7 @@ type room struct {
 	leave   chan *client
 	clients map[*client]bool
 
-	tracer tracer.Tracer
+	tracer trace.Tracer
 }
 
 func newRoom() *room {
@@ -32,20 +32,20 @@ func (r *room) run() {
 		select {
 		case client := <-r.join:
 			r.clients[client] = true
-			// r.tracer.Trace("New Client")
+			r.tracer.Trace("New Client")
 		case client := <-r.leave:
 			delete(r.clients, client)
 			close(client.send)
-			// r.tracer.Trace("Client left")
+			r.tracer.Trace("Client left")
 		case msg := <-r.forward:
 			for client := range r.clients {
 				select {
 				case client.send <- msg:
-					// r.tracer.Trace("Message send %s", msg)
+					r.tracer.Trace("Message send %s", msg)
 				default:
 					delete(r.clients, client)
 					close(client.send)
-					// r.tracer.Trace("Faild to deliver Message. Client closed")
+					r.tracer.Trace("Faild to deliver Message. Client closed")
 				}
 			}
 		}
