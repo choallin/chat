@@ -26,8 +26,10 @@ func main() {
 	var addr = flag.String("addr", ":8088", "The addr of the application.")
 	flag.Parse()
 	r := newRoom()
-	http.Handle("/", &templateHandler{filename: "chat.html"})
+	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/room", r)
+	http.HandleFunc("/auth/callback/login", loginHandler)
+	http.Handle("/login", &templateHandler{filename: "login.html"})
 	go r.run()
 
 	log.Println("Starte den Webserver auf ", *addr)

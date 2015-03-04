@@ -1,0 +1,44 @@
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+	<script type="text/javascript">
+	$().ready(function() {
+		$('#login-button').on('click', function() {
+			console.log('Versende Login Daten');
+			var password = CryptoJS.MD5($('#password').val());
+			console.log(password.toString());
+			$.post('/auth/callback/login',{login: $('#login').val(), password: password.toString()}, function(response) {
+				console.log('Response angekommen');
+				if (!respose.valid) {
+					alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');
+				}
+			},'json');
+		});
+	});
+	</script>
+</head>
+<body>
+	<div class="container">
+		<div class="page-header">
+			<h1>Login</h1>
+		</div>
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				<h3 class="panel-title">Zum Chatten bitte einloggen</h3>
+			</div>
+			<div class="panel-body">
+				<p>
+					Username: <input type="text" name="login" id="login">
+				</p>
+				<p>
+					Passwort: <input type="password" name="password" id="password">
+				</p>
+				<p> <input type="button" value="Login" id="login-button"> </p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
