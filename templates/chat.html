@@ -10,6 +10,7 @@
 		<p>Let's chat again and over and </p>
 		<ul id="messages">
 			<form action="post" id="chatbox">
+				{{.UserData.name}}:<br>
 				<textarea name="message" cols="30" rows="10"></textarea>
 				<input type="submit" value="send"/>
 			</form>
@@ -28,7 +29,7 @@
 						alert("Fehler: Keine Socket Verbindung zum Chatserver");
 						return false;
 					}
-					socket.send(msgBox.val());
+					socket.send(JSON.stringify({"Message": msgBox.val()}) );
 					return false;
 				});
 				if (!window["WebSocket"]) {
@@ -39,9 +40,15 @@
 						alert("Verbindung zum Chatserver unterbrochen");
 					};
 					socket.onmessage = function (event) {
-						messages.append($("<li>").text(event.data));
+						var msg = eval("("+event.data+")")
+						messages.append(
+							$("<li>").append(
+									$("<strong>").text(msg.Name+": "),
+									$("<span>").text(msg.Message)
+								)
+						);
 					};
-					socekt.onopen = function (ee) {
+					socket.onopen = function (ee) {
 						alert("Verbingund hergestellt");
 					}
 				}

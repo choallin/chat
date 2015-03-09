@@ -3,14 +3,15 @@
 	<title></title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+	<!-- <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script> -->
 	<script type="text/javascript">
 	$().ready(function() {
 		$('#login-button').on('click', function() {
 			console.log('Versende Login Daten');
-			var password = CryptoJS.MD5($('#password').val());
-			console.log(password.toString());
-			$.post('/auth/callback/login',{login: $('#login').val(), password: password.toString()}, function(response) {
+			// var password = CryptoJS.MD5($('#password').val());
+			password = $("#password").val();
+			// console.log(password.toString());
+			$.post('/auth/callback/login',{login: $('#login').val(), password: password}, function(response) {
 				console.log('Response angekommen');
 				if (!respose.valid) {
 					alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');

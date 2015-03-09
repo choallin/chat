@@ -10,7 +10,7 @@ import (
 )
 
 type room struct {
-	forward chan []byte
+	forward chan *message
 	join    chan *client
 	leave   chan *client
 	clients map[*client]bool
@@ -20,7 +20,7 @@ type room struct {
 
 func newRoom() *room {
 	return &room{
-		forward: make(chan []byte),
+		forward: make(chan *message),
 		join:    make(chan *client),
 		leave:   make(chan *client),
 		clients: make(map[*client]bool),
@@ -43,7 +43,7 @@ func (r *room) run() {
 			for client := range r.clients {
 				select {
 				case client.send <- msg:
-					r.tracer.Trace("Message send %s", msg)
+					r.tracer.Trace("Message send %s", msg.Message)
 				default:
 					delete(r.clients, client)
 					close(client.send)
@@ -67,10 +67,17 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		log.Fatal("ServeHTTP: ", err)
 		return
 	}
+	authCookie, err := req.Cookie("auth")
+	if err != nil {
+		log.Fatal("Can't get auth cookie:", err)
+		return
+	}
+	cookieMap := map[string]interface{}{"name": authCookie.Value}
 	client := &client{
-		socket: socket,
-		send:   make(chan []byte, messageBufferSize),
-		room:   r,
+		socket:   socket,
+		send:     make(chan *message, messageBufferSize),
+		room:     r,
+		userData: cookieMap,
 	}
 	fmt.Printf("Socket verbunden %+v", client)
 	r.join <- client

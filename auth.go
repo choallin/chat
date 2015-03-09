@@ -1,9 +1,6 @@
 package main
 
-import (
-	"log"
-	"net/http"
-)
+import "net/http"
 
 type authHandler struct {
 	next http.Handler
@@ -22,11 +19,15 @@ func (auth *authHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("%v", r.PostFormValue("login"))
-	log.Println("%v", r.PostFormValue("password"))
-	//check if login Data is Valid
-	//connect to Redis Server that has the user login data:
-	//
+	if r.PostFormValue("login") == "stage" && r.PostFormValue("password") == "nico" {
+		http.SetCookie(w, &http.Cookie{
+			Name:  "auth",
+			Value: "stage",
+			Path:  "/",
+		})
+		//@todo: JSON output, so that JavaScript can handle the state of the UI
+
+	}
 }
 
 func MustAuth(handler http.Handler) http.Handler {
