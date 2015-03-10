@@ -4,20 +4,65 @@
 		<style type="text/css">
 			input {display: block;}
 			ul {list-style: none;}
+
+			.chat-input {
+				height: 75px;
+				border: none;
+				background-color: #F5F5F5;
+				color: grey;
+				border-radius: 4px;
+				text-align: center;
+				width: 100%;
+
+				position: absolute;
+				bottom: 0;
+				margin-bottom: 1em;
+			}
+
+			.container {
+				background-color: green;
+				height: 100%;
+			}
+
+			.panel-body {
+				height: 25em;
+				position: relative;
+			}
+			.chat-items {
+				max-height: 250px;
+				overflow-y: scroll;
+			}
 		</style>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	</head>
 	<body>
-		<p>Let's chat again and over and </p>
-		<ul id="messages">
-			<form action="post" id="chatbox">
-				{{.UserData.name}}:<br>
-				<textarea name="message" cols="30" rows="10"></textarea>
-				<input type="submit" value="send"/>
-			</form>
-		</ul>
+		<div class="container">
+			<div class="page-header">
+				<h2>Logged in as: {{.UserData.name}}</h2>
+			</div>
+			<div class="panel panel-default">
+				<form class="chat-form" action="post" id="chatbox">
+					<div class="panel-body">
+						<ul class="chat-items" id="messages">
+						</ul>
+						<textarea class="chat-input" name="message" cols="30" rows="10"></textarea>
+					</div>
+					<div class="panel-footer">
+						<input class="chat-submit" type="submit" value="send"/>
+					</div>
+				</form>
+			</div>
+		</div>
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script type="text/javascript">
 			$(function() {
+				if (!(Notification.permission == "granted")) {
+					Notification.requestPermission(function (permission) {
+						if (permission === "granted") {
+							console.log("permission granted");
+						}
+					});
+				}
 				var socket = null;
 				var msgBox = $('#chatbox textarea');
 				var messages = $('#messages');
@@ -42,11 +87,14 @@
 					socket.onmessage = function (event) {
 						var msg = eval("("+event.data+")")
 						messages.append(
-							$("<li>").append(
+							$("<li class='chat-history-item'>").append(
 									$("<strong>").text(msg.Name+": "),
 									$("<span>").text(msg.Message)
 								)
 						);
+						// to go to the end of the chat entries:
+						$(".chat-items").animate({ scrollTop: $(document).height() }, "slow");
+						var newNotification = new Notification("Neue Chatnachricht: "+msg.Message);
 					};
 					socket.onopen = function (ee) {
 						alert("Verbingund hergestellt");

@@ -25,11 +25,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			Value: "stage",
 			Path:  "/",
 		})
+		w.Header().Set("Location", "/chat")
+		w.WriteHeader(http.StatusTemporaryRedirect)
 		//@todo: JSON output, so that JavaScript can handle the state of the UI
-
 	}
 }
 
+// MustAuth Authentification Handler
 func MustAuth(handler http.Handler) http.Handler {
 	return &authHandler{next: handler}
 }
