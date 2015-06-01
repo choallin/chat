@@ -7,14 +7,12 @@
 	<script type="text/javascript">
 	$().ready(function() {
 		$('#login-button').on('click', function() {
-			console.log('Versende Login Daten');
-			// var password = CryptoJS.MD5($('#password').val());
 			password = $("#password").val();
-			// console.log(password.toString());
 			$.post('/auth/callback/login',{login: $('#login').val(), password: password}, function(response) {
-				console.log('Response angekommen');
-				if (!respose.valid) {
+				if (!response.valid) {
 					alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');
+				} else {
+					location.replace("chat","login");
 				}
 			},'json');
 		});

@@ -19,14 +19,15 @@ func (auth *authHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.PostFormValue("login") == "stage" && r.PostFormValue("password") == "nico" {
+	if (r.PostFormValue("login") == "stage" || r.PostFormValue("login") == "regie") && r.PostFormValue("password") == "nico" {
 		http.SetCookie(w, &http.Cookie{
 			Name:  "auth",
-			Value: "stage",
+			Value: r.PostFormValue("login"),
 			Path:  "/",
 		})
-		w.Header().Set("Location", "/chat")
-		w.WriteHeader(http.StatusTemporaryRedirect)
+		resp := []byte("{\"valid\": true}")
+		w.WriteHeader(http.StatusOK)
+		w.Write(resp)
 		//@todo: JSON output, so that JavaScript can handle the state of the UI
 	}
 }
