@@ -25,7 +25,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			Value: r.PostFormValue("login"),
 			Path:  "/",
 		})
-		resp := []byte("{\"valid\": true, \"location\": chat}")
+		resp := []byte("{\"valid\": true, \"location\": \"chat\"}")
 		w.WriteHeader(http.StatusOK)
 		w.Write(resp)
 	} else if r.PostFormValue("login") == "orator" && r.PostFormValue("password") == "nico" {
