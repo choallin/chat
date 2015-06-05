@@ -1,22 +1,8 @@
 <html>
 <head>
 	<title></title>
-	<link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
-	<script type="text/javascript">
-	$().ready(function() {
-		$('#login-button').on('click', function() {
-			password = $("#password").val();
-			$.post('/auth/callback/login',{login: $('#login').val(), password: password}, function(response) {
-				if (!response.valid) {
-					alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');
-				} else {
-					location.replace(response.location,"login");
-				}
-			},'json');
-		});
-	});
-	</script>
 </head>
+	<link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
 <body>
 	<div class="container">
 		<div class="page-header">
@@ -40,5 +26,19 @@
 		</div>
 	</div>
 	<script type="text/javascript" src="/js/jquery.min.js"></script>
+	<script type="text/javascript">
+	$().ready(function() {
+		$('#login-button').on('click', function() {
+			password = $("#password").val();
+			$.post('/auth/callback/login',{login: $('#login').val(), password: password}, function(response) {
+				if (!response.valid) {
+					alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');
+				} else {
+					location.replace(response.location,"login");
+				}
+			},'json');
+		});
+	});
+	</script>
 </body>
 </html>
