@@ -31,6 +31,10 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var addr = flag.String("addr", ":8088", "The addr of the application.")
 	flag.Parse()
+
+	fileServer := http.FileServer(http.Dir("static"))
+	http.Handle("/", fileServer)
+
 	r := newRoom()
 	http.HandleFunc("/auth/callback/login", loginHandler)
 	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
