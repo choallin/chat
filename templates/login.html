@@ -12,7 +12,7 @@
 				if (!response.valid) {
 					alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');
 				} else {
-					location.replace("chat","login");
+					location.replace(response.location,"login");
 				}
 			},'json');
 		});

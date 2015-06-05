@@ -25,11 +25,20 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			Value: r.PostFormValue("login"),
 			Path:  "/",
 		})
-		resp := []byte("{\"valid\": true}")
+		resp := []byte("{\"valid\": true, \"location\": chat}")
 		w.WriteHeader(http.StatusOK)
 		w.Write(resp)
-		//@todo: JSON output, so that JavaScript can handle the state of the UI
+	} else if r.PostFormValue("login") == "orator" && r.PostFormValue("password") == "nico" {
+		http.SetCookie(w, &http.Cookie{
+			Name:  "auth",
+			Value: r.PostFormValue("login"),
+			Path:  "/",
+		})
+		resp := []byte("{\"valid\": true, \"location\": \"orator\"}")
+		w.WriteHeader(http.StatusOK)
+		w.Write(resp)
 	}
+
 }
 
 // MustAuth Authentification Handler

@@ -35,6 +35,7 @@ func main() {
 	http.HandleFunc("/auth/callback/login", loginHandler)
 	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/room", r)
+	http.Handle("/orator", MustAuth(&templateHandler{filename: "orator.html"}))
 	http.Handle("/login", &templateHandler{filename: "login.html"})
 	go r.run()
 
