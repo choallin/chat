@@ -79,7 +79,6 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		room:     r,
 		userData: cookieMap,
 	}
-	fmt.Printf("Socket verbunden %+v", client)
 	r.join <- client
 	defer func() { r.leave <- client }()
 	go client.write()
