@@ -28,6 +28,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		resp := []byte("{\"valid\": true, \"location\": \"chat\"}")
 		w.WriteHeader(http.StatusOK)
 		w.Write(resp)
+		return
 	} else if r.PostFormValue("login") == "orator" && r.PostFormValue("password") == "nico" {
 		http.SetCookie(w, &http.Cookie{
 			Name:  "auth",
@@ -37,8 +38,10 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		resp := []byte("{\"valid\": true, \"location\": \"orator\"}")
 		w.WriteHeader(http.StatusOK)
 		w.Write(resp)
+		return
 	}
-
+	resp := []byte("{\"valid\": false}")
+	w.Write(resp)
 }
 
 // MustAuth Authentification Handler
