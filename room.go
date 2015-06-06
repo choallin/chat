@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -30,6 +31,11 @@ func newRoom() *room {
 }
 
 func (r *room) run() {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+	}()
+
 	for {
 		select {
 		case client := <-r.join:
@@ -47,8 +53,14 @@ func (r *room) run() {
 				default:
 					delete(r.clients, client)
 					close(client.send)
-					r.tracer.Trace("Faild to deliver Message. Client closed")
+					fmt.Println("Faild to deliver Message %v. Client closed", msg)
 				}
+			}
+		case <-ticker.C:
+			msg := new(message)
+			for client := range r.clients {
+				// no client availiable
+				client.WriteMessage(msg)
 			}
 		}
 	}

@@ -15,12 +15,26 @@ type client struct {
 }
 
 const (
-	pongWait   = 60 * time.Second
-	writeWait  = 10 * time.Second
-	pingPeriod = (pongWait * 9) / 10
+	pongWait       = 60 * time.Second
+	writeWait      = 10 * time.Second
+	pingPeriod     = (pongWait * 9) / 10
+	maxMessageSize = 512
+	PingMessage    = 9
 )
 
+func (c *client) WriteMessage(msg *message) {
+	if err := c.socket.WriteMessage(PingMessage, []byte(msg.Message)); err != nil {
+		fmt.Println("PingMessage not availiable")
+		fmt.Println("Error: %v", err)
+	} else {
+		fmt.Println("Ping mesage sent")
+	}
+}
+
 func (c *client) read() {
+	c.socket.SetReadLimit(maxMessageSize)
+	c.socket.SetReadDeadline(time.Now().Add(pongWait))
+	c.socket.SetPongHandler(func(string) error { c.socket.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
 		var msg *message
 		if err := c.socket.ReadJSON(&msg); err == nil {
@@ -28,32 +42,26 @@ func (c *client) read() {
 			msg.Name = c.userData["name"].(string)
 			c.room.forward <- msg
 		} else {
+			c.user_lost()
+			fmt.Println("Error in read Method")
+			fmt.Println("Error: %v", err)
 			break
 		}
 	}
 	c.socket.Close()
 }
 
+func (c *client) user_lost() {
+	msg := NewMessageUserData(c.userData)
+	fmt.Println("Send user lost message. %v", msg)
+	c.socket.WriteJSON(msg)
+}
+
 func (c *client) write() {
-	ticker := time.NewTicker(pingPeriod)
-	defer func() {
-		ticker.Stop()
-	}()
-	for {
-		select {
-		case <-ticker.C:
-			// PingMessage == 9
-			if err := c.socket.WriteMessage(9, []byte{}); err != nil {
-				fmt.Println("PingMessage not availiable")
-			}
-		default:
-			for msg := range c.send {
-				if err := c.socket.WriteJSON(msg); err != nil {
-					fmt.Println("Error: %v", err)
-					break
-				}
-			}
-			c.socket.Close()
+	for msg := range c.send {
+		if err := c.socket.WriteJSON(msg); err != nil {
+			break
 		}
 	}
+	c.socket.Close()
 }
