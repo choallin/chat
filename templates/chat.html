@@ -103,16 +103,25 @@
 						alert("Verbindung zum Chatserver unterbrochen");
 					};
 					socket.onmessage = function (event) {
-						var msg = eval("("+event.data+")")
-						messages.append(
-							$("<li class='chat-history-item'>").append(
-									$("<strong>").text(msg.Name+": "),
-									$("<span>").text(msg.Message)
-								)
-						);
-						// to go to the end of the chat entries:
-						$(".chat-items").animate({ scrollTop: $(document).height() }, "slow");
-						var newNotification = new Notification("Neue Chatnachricht: "+msg.Message);
+						var msg = eval("("+event.data+")");
+						var regexResult = msg.Message.match(/^Code(\d{3}) (\w*)/)
+						if (regexResult) {
+							switch (regexResult[1]) {
+								case "001":
+									alert("User "+regexResult[2]+" hat den Chat verlassen");
+								break;
+							}
+						} else {
+							messages.append(
+								$("<li class='chat-history-item'>").append(
+										$("<strong>").text(msg.Name+": "),
+										$("<span>").text(msg.Message)
+									)
+							);
+							// to go to the end of the chat entries:
+							$(".chat-items").animate({ scrollTop: $(document).height() }, "slow");
+							var newNotification = new Notification("Neue Chatnachricht: "+msg.Message);
+						}
 					};
 					socket.onopen = function (ee) {
 						alert("Verbingund hergestellt");
