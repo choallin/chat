@@ -54,7 +54,6 @@ func (c *client) read() {
 func (c *client) user_lost() {
 	msg := NewMessageUserData(c.userData)
 	fmt.Println("Send user lost message. %v", msg)
-	c.socket.WriteJSON(msg)
 }
 
 func (c *client) write() {

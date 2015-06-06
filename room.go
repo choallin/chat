@@ -42,15 +42,20 @@ func (r *room) run() {
 			r.clients[client] = true
 			r.tracer.Trace("New Client")
 		case client := <-r.leave:
+			msg := NewMessageUserData(client.userData)
 			delete(r.clients, client)
 			close(client.send)
-			r.tracer.Trace("Client left")
+			fmt.Println("Client left")
+			for client := range r.clients {
+				client.send <- msg
+			}
 		case msg := <-r.forward:
 			for client := range r.clients {
 				select {
 				case client.send <- msg:
-					r.tracer.Trace("Message send %s", msg.Message)
+					fmt.Println("Message send %s", msg.Message)
 				default:
+					fmt.Println("TEst ausgabe!!!")
 					delete(r.clients, client)
 					close(client.send)
 					fmt.Println("Faild to deliver Message %v. Client closed", msg)
@@ -59,7 +64,6 @@ func (r *room) run() {
 		case <-ticker.C:
 			msg := new(message)
 			for client := range r.clients {
-				// no client availiable
 				client.WriteMessage(msg)
 			}
 		}
