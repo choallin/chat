@@ -42,18 +42,12 @@ func (c *client) read() {
 			msg.Name = c.userData["name"].(string)
 			c.room.forward <- msg
 		} else {
-			c.user_lost()
 			fmt.Println("Error in read Method")
 			fmt.Println("Error: %v", err)
 			break
 		}
 	}
 	c.socket.Close()
-}
-
-func (c *client) user_lost() {
-	msg := NewMessageUserData(c.userData)
-	fmt.Println("Send user lost message. %v", msg)
 }
 
 func (c *client) write() {

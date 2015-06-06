@@ -45,7 +45,6 @@ func (r *room) run() {
 			msg := NewMessageUserData(client.userData)
 			delete(r.clients, client)
 			close(client.send)
-			fmt.Println("Client left")
 			for client := range r.clients {
 				client.send <- msg
 			}
@@ -53,9 +52,8 @@ func (r *room) run() {
 			for client := range r.clients {
 				select {
 				case client.send <- msg:
-					fmt.Println("Message send %s", msg.Message)
+
 				default:
-					fmt.Println("TEst ausgabe!!!")
 					delete(r.clients, client)
 					close(client.send)
 					fmt.Println("Faild to deliver Message %v. Client closed", msg)
