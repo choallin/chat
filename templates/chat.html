@@ -58,7 +58,12 @@
 		<link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
 	</head>
 	<body>
-		<div class="container">
+		<div class="col-md-2 col-sm-3 sidebar">
+			<ul class="user-elements">Anwesende User
+				<li id="user-element-default" class="user-element">Keiner</li>
+			</ul>
+		</div>
+		<div class="col-md-8 col-sm-9 container">
 			<div class="page-header">
 				<h2>Logged in as: {{.UserData.name}}</h2>
 			</div>
@@ -75,10 +80,8 @@
 				</form>
 			</div>
 		</div>
-		<div class="sidebar">
-			<ul class="user-elements">Anwesende User
-				<li id="user-element-default" class="user-element">Keiner</li>
-			</ul>
+		<div class="col-md-2 col-sm-0">
+			
 		</div>
 		<script type="text/javascript" src="/js/jquery.min.js"></script>
 		<script type="text/javascript">
