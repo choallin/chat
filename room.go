@@ -39,8 +39,16 @@ func (r *room) run() {
 	for {
 		select {
 		case client := <-r.join:
+			msg := new(message)
+			msg.Name = "server.socket"
+			msg.Message = "Code002 " + client.userData["name"].(string)
+			msg.Time = time.Now()
+			fmt.Println("Neuer client: %v", client)
+			fmt.Println("Nachricht: %v", msg)
+			for client := range r.clients {
+				client.send <- msg
+			}
 			r.clients[client] = true
-			r.tracer.Trace("New Client")
 		case client := <-r.leave:
 			msg := NewMessageUserData(client.userData)
 			delete(r.clients, client)
