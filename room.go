@@ -66,6 +66,9 @@ func (r *room) run() {
 			}
 		case msg := <-r.forward:
 			for client := range r.clients {
+				if client.userData["name"].(string) == msg.Name {
+					continue
+				}
 				select {
 				case client.send <- msg:
 
