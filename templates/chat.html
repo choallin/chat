@@ -173,7 +173,10 @@
 							);
 							// to go to the end of the chat entries:
 							$(".chat-items").animate({ scrollTop: $(document).height() }, "slow");
-							var newNotification = new Notification("Neue Chatnachricht: "+msg.Message);
+							// Will not work, if other cookies will be added
+							if ("auth="+msg.Name != document.cookie) {
+								var newNotification = new Notification("Neue Chatnachricht von "+msg.Name+": "+msg.Message);
+							}
 						}
 					};
 					socket.onopen = function (ee) {
