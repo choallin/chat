@@ -5,63 +5,36 @@
 			input {display: block;}
 			ul {list-style: none;}
 
-			.chat-input {
-				height: 75px;
-				border: none;
-				background-color: #F5F5F5;
-				color: grey;
-				border-radius: 4px;
-				text-align: center;
-				width: 100%;
-				padding: 10px;
-
-				/*notwendig, weil die parent classe panel-body von bootstrap padding 15 px gesetzt bekommt */
-				margin-left: -15px;
-
-				position: absolute;
-				bottom: 0;
-				margin-bottom: 1em;
-			}
-
-			.container {
-				background-color: mediumseagreen;
-				height: 100%;
-			}
-
 			body {
 				background-color: gainsboro;
 			}
-
-			.panel-body {
-				height: 25em;
-				position: relative;
-			}
-			.chat-items {
-				max-height: 250px;
-				overflow-y: scroll;
-			}
 			.orator-button {
-				width: 100%;
-				height: 250px;
-				font-size: xx-large;
+				width: 95%;
+				height: 95%;
+				font-size: 900%;
 				background-color: cadetblue;
 				margin-bottom: -20px;
 				border: aliceblue;
+			}
+			.centered {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				/* bring your own prefixes */
+				-webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
+				transform: translate(-50%, -50%);
+			}
+			.red-font {
+				font-weight: bold;
+				color: red;
 			}
 		</style>
 		<link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
 	</head>
 	<body>
-		<div class="container">
-			<div class="page-header">
-				<h2></h2>
-			</div>
-			<div class="panel panel-default">
-				<form class="chat-form" action="post" id="chatbox">
-					<button class="orator-button">Video bereit machen</button>
-				</form>
-			</div>
-		</div>
+	<form class="chat-form" action="post" id="chatbox">
+		<button id="orator-button" class="orator-button centered">Video bereit machen</button>
+	</form>
 		<script type="text/javascript" src="/js/jquery.min.js"></script>
 		<script type="text/javascript">
 			$(function() {
@@ -79,6 +52,10 @@
 						return false;
 					}
 					socket.send(JSON.stringify({"Message": "REDNER: Bereit machen ein Video abzuspielen!"}) );
+					$("#orator-button").text("Nachricht verschickt!!").addClass("red-font");
+					setTimeout(function () {
+						$("#orator-button").text("Video bereit machen").removeClass("red-font");
+					}, 3000);
 					return false;
 				});
 				if (!window["WebSocket"]) {
