@@ -128,6 +128,7 @@
 							switch (regexResult[1]) {
 								case "001":
 									alert("User "+regexResult[2]+" hat den Chat verlassen");
+									$("#"+regexResult[2]+"-user").remove();
 								break;
 								case "002":
 									var defaultUser = $("#user-element-default");
@@ -135,7 +136,7 @@
 										defaultUser.remove();
 									}
 									$(".user-elements").append(
-										"<li id=\""+regexResult[2]+"\" class=\"user-element\">"+regexResult[2]+"</li>"
+										"<li id=\""+regexResult[2]+"-user\" class=\"user-element\">"+regexResult[2]+"</li>"
 									);
 								break;
 							}
