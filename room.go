@@ -45,10 +45,10 @@ func (r *room) run() {
 			msg.Time = time.Now()
 			fmt.Println("Neuer client: %v", client)
 			fmt.Println("Nachricht: %v", msg)
+			r.clients[client] = true
 			for client := range r.clients {
 				client.send <- msg
 			}
-			r.clients[client] = true
 		case client := <-r.leave:
 			msg := NewMessageUserData(client.userData)
 			delete(r.clients, client)

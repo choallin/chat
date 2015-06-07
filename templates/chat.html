@@ -28,6 +28,20 @@
 				height: 100%;
 			}
 
+			.sidebar {
+				position: fixed;
+				top: 20px;
+				left: 20px;
+			}
+
+			.user-elements {
+				font-style: italic;
+				font-size: larger;
+			}
+			.user-element {
+				font-style: initial;
+			}
+
 			body {
 				background-color: gainsboro;
 			}
@@ -60,6 +74,11 @@
 					</div>
 				</form>
 			</div>
+		</div>
+		<div class="sidebar">
+			<ul class="user-elements">Anwesende User
+				<li id="user-element-default" class="user-element">Keiner</li>
+			</ul>
 		</div>
 		<script type="text/javascript" src="/js/jquery.min.js"></script>
 		<script type="text/javascript">
@@ -111,7 +130,13 @@
 									alert("User "+regexResult[2]+" hat den Chat verlassen");
 								break;
 								case "002":
-									alert("User "+regexResult[2]+" ist dem Chat beigetreten");
+									var defaultUser = $("#user-element-default");
+									if (defaultUser.length > 0) {
+										defaultUser.remove();
+									}
+									$(".user-elements").append(
+										"<li id=\""+regexResult[2]+"\" class=\"user-element\">"+regexResult[2]+"</li>"
+									);
 								break;
 							}
 						} else {
