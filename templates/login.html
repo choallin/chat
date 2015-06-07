@@ -28,17 +28,25 @@
 	<script type="text/javascript" src="/js/jquery.min.js"></script>
 	<script type="text/javascript">
 	$().ready(function() {
-		$('#login-button').on('click', function() {
-			password = $("#password").val();
-			$.post('/auth/callback/login',{login: $('#login').val(), password: password}, function(response) {
-				if (!response.valid) {
-					alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');
-				} else {
-					location.replace(response.location,"login");
-				}
-			},'json');
+		$('#login-button').on('click', function (event) { loginFormSend()});
+		$("#password").keypress(function(event) {
+			if (event.which == 13) {
+				loginFormSend();
+			}
 		});
+
 	});
+	function loginFormSend()
+	{
+		var password = $("#password").val();
+		$.post('/auth/callback/login',{login: $('#login').val(), password: password}, function(response) {
+			if (!response.valid) {
+				alert('Ungültiger Login. Bitte geben probieren Sie es nochmal.');
+			} else {
+				location.replace(response.location,"login");
+			}
+		},'json');
+	}
 	</script>
 </body>
 </html>
