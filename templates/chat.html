@@ -175,7 +175,11 @@
 							$(".chat-items").animate({ scrollTop: $(document).height() }, "slow");
 							// Will not work, if other cookies will be added
 							if ("auth="+msg.Name != document.cookie) {
-								var newNotification = new Notification("Neue Chatnachricht von "+msg.Name+": "+msg.Message);
+								if (typeof ( window.Notification) !== "function" ) {
+									var newNotification = new Notification("Neue Chatnachricht von "+msg.Name+": "+msg.Message);
+								} else {
+									alert("Neue Chatnachricht von "+msg.Name+": "+msg.Message);
+								}
 							}
 						}
 					};
