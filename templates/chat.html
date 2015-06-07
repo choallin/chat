@@ -117,6 +117,20 @@
 				if (!window["WebSocket"]) {
 					alert("Fehler: Der Browser unterstützt keine Websockets");
 				} else {
+
+					var socketHandlerHelper = new Object();
+					socketHandlerHelper.insertUser = function (userName) {
+						$(".user-elements").append(
+							"<li id=\""+userName+"-user\" class=\"user-element\">"+userName+"</li>"
+						);
+					};
+					socketHandlerHelper.removeDefaultUser = function() {
+						var defaultUser = $("#user-element-default");
+						if (defaultUser.length > 0) {
+							defaultUser.remove();
+						}
+					};
+
 					socket = new WebSocket("ws://{{.Host}}/room");
 					socket.onclose = function () {
 						alert("Verbindung zum Chatserver unterbrochen");
@@ -131,13 +145,23 @@
 									$("#"+regexResult[2]+"-user").remove();
 								break;
 								case "002":
-									var defaultUser = $("#user-element-default");
-									if (defaultUser.length > 0) {
-										defaultUser.remove();
+									socketHandlerHelper.removeDefaultUser();
+									socketHandlerHelper.insertUser(regexResult[2]);
+								break;
+								case "003":
+									socketHandlerHelper.removeDefaultUser();
+
+									var users = regexResult[2].split(";");
+									console.log("Users: ");
+									console.log(users);
+									if (users.length > 1) {
+										for (var user in users) {
+											console.log(user);
+											socketHandlerHelper.insertUser(user);
+										}
+									} else {
+										socketHandlerHelper.insertUser(regexResult[2]);
 									}
-									$(".user-elements").append(
-										"<li id=\""+regexResult[2]+"-user\" class=\"user-element\">"+regexResult[2]+"</li>"
-									);
 								break;
 							}
 						} else {

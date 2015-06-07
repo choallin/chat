@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -28,6 +29,13 @@ func newRoom() *room {
 
 		tracer: trace.Off(),
 	}
+}
+
+func (r *room) allUsers() (users []string) {
+	for client := range r.clients {
+		users = append(users, client.userData["name"].(string))
+	}
+	return
 }
 
 func (r *room) run() {
@@ -102,6 +110,13 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		userData: cookieMap,
 	}
 	r.join <- client
+	msg := new(message)
+	msg.Name = "server.socket"
+	allUsers := r.allUsers()
+
+	msg.Message = "Code003 " + strings.Join(allUsers, ";")
+	msg.Time = time.Now()
+	client.send <- msg
 	defer func() { r.leave <- client }()
 	go client.write()
 	client.read()
