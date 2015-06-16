@@ -62,6 +62,10 @@
 			<ul class="user-elements">Anwesende User
 				<li id="user-element-default" class="user-element">Keiner</li>
 			</ul>
+			{{ $userName := .UserData.name}}
+			{{ if eq $userName  "regie"}}
+				<input type="button" value="Status: Bereit an Redner senden" id="state-regie">
+			{{ end 	}}
 		</div>
 		<div class="col-md-8 col-sm-9 container">
 			<div class="page-header">
@@ -188,8 +192,11 @@
 					};
 					socket.onopen = function (ee) {
 						alert("Verbingund hergestellt");
-					}
+					};
 				}
+				$('#state-regie').on('click', function(event) {
+					socket.send(JSON.stringify({"Message": "ClientCode001: Video is ready"}));
+				});
 			});
 		</script>
 	</body>
