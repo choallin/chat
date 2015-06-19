@@ -64,7 +64,7 @@
 			</ul>
 			{{ $userName := .UserData.name}}
 			{{ if eq $userName  "regie"}}
-				<input type="button" value="Status: Bereit an Redner senden" id="state-regie">
+				<button id="state-regie"></button>
 			{{ end 	}}
 		</div>
 		<div class="col-md-8 col-sm-9 container">
@@ -90,13 +90,45 @@
 		<script type="text/javascript" src="/js/jquery.min.js"></script>
 		<script type="text/javascript">
 			$(function() {
-				if (!(Notification.permission == "granted")) {
+				if (Notification.permission != "granted") {
 					Notification.requestPermission(function (permission) {
 						if (permission === "granted") {
 							console.log("permission granted");
 						}
 					});
 				}
+
+				window.state = {
+					_state : 0,
+					_button: $("#state-regie"),
+					setState: function (state) {
+						this._state = state;
+						this._stateMaschine();
+					},
+					_stateMaschine: function () {
+						//@todo: when ES6 is ready to be used, here should be constants instead of Numbers
+						switch(parseInt(this._state)) {
+							case 1:
+								console.log("State 1");
+								this._button.text("Pult Status: Video bereit");
+								break;
+							case 2:
+								console.log("State 2");
+								this._button.text("Pult Status: Start Info erteilt");
+								// "this" is in setTimeout different so have to save it in the "closure" variable
+								var self = this;
+								window.setTimeout(function() {
+									self.setState(0);
+								}, 3000);
+								break;
+							default:
+								console.log("default");
+								this._button.text("Neuen Statussenden: Video Bereit an Redner senden");
+								break;
+						}
+					},
+				};
+				window.state.setState(0);
 				var socket = null;
 				var msgBox = $('#chatbox textarea');
 				var messages = $('#messages');
@@ -125,7 +157,7 @@
 					alert("Fehler: Der Browser unterstützt keine Websockets");
 				} else {
 
-					var socketHandlerHelper = new Object();
+					var socketHandlerHelper = {};
 					socketHandlerHelper.insertUser = function (userName) {
 						$(".user-elements").append(
 							"<li id=\""+userName+"-user\" class=\"user-element\">"+userName+"</li>"
@@ -144,32 +176,38 @@
 					};
 					socket.onmessage = function (event) {
 						var msg = eval("("+event.data+")");
-						var regexResult = msg.Message.match(/^Code(\d{3}) ([a-zA-Z;]*)/)
+						var regexResult = msg.Message.match(/^Code(\d{3}) ([a-zA-Z;]*)/);		
 						if (regexResult) {
 							switch (regexResult[1]) {
-								case "001":
-									alert("User "+regexResult[2]+" hat den Chat verlassen");
-									$("#"+regexResult[2]+"-user").remove();
+							case "001":
+								alert("User "+regexResult[2]+" hat den Chat verlassen");
+								$("#"+regexResult[2]+"-user").remove();
 								break;
-								case "002":
-									socketHandlerHelper.removeDefaultUser();
-									socketHandlerHelper.insertUser(regexResult[2]);
+							case "002":
+								socketHandlerHelper.removeDefaultUser();
+								socketHandlerHelper.insertUser(regexResult[2]);
 								break;
-								case "003":
-									socketHandlerHelper.removeDefaultUser();
+							case "003":
+								socketHandlerHelper.removeDefaultUser();
 
-									var users = regexResult[2].split(";");
-									console.log("Users: ");
-									console.log(users);
-									if (users.length > 1) {
-										$.each(users, function(key, user) {
-											console.log(user);
-											socketHandlerHelper.insertUser(user);
-										});
-									} else {
-										socketHandlerHelper.insertUser(regexResult[2]);
-									}
+								var users = regexResult[2].split(";");
+								if (users.length > 1) {
+									$.each(users, function(key, user) {
+										socketHandlerHelper.insertUser(user);
+									});
+								} else {
+									socketHandlerHelper.insertUser(regexResult[2]);
+								}
 								break;
+							}
+						} else if (matches = msg.Message.match(/^ClientCode(\d+): (\w\D\S+) (\w\D\S+) (\d)/)) { // https://regex101.com/r/fQ3uU0/1
+							console.log(matches);
+							if ($("#state-regie") && matches[1] == "002" && matches[2] == "regie") {
+								switch (matches[3]) {
+								case "Status":
+									window.state.setState(matches[4]);
+									break;
+								}
 							}
 						} else {
 							messages.append(

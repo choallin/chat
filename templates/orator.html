@@ -72,10 +72,13 @@
 								case 1:
 									console.log("State 1");
 									this._button.text("Video bereit").removeAttr("disabled");
+									socket.send(JSON.stringify({"Message": "ClientCode002: regie Status 1"}));
 									break;
 								case 2:
 									console.log("State 2");
 									this._button.text("Start Info erteilt").addClass("red-font").prop("disabled", "disabled");
+									socket.send(JSON.stringify({"Message": "ClientCode002: regie Status 2"}));
+
 									// this is in setTimeout different so have to save it in the "closure" variable
 									var self = this;
 									window.setTimeout(function() {
@@ -85,6 +88,8 @@
 								default:
 									console.log("default");
 									this._button.prop("disabled", "disabled").text("").removeClass("red-font");
+									socket.send(JSON.stringify({"Message": "ClientCode002: regie Status 0"}));
+
 									break;
 							}
 						},
@@ -96,7 +101,7 @@
 						var msg = eval("("+event.data+")");
 						console.log(msg);
 						// https://regex101.com/r/fQ3uU0/1
-						matches = msg.Message.match(/^\w\D+(\d+): (\w\D\S+) (\w\D\S+) (\d)/);
+						var matches = msg.Message.match(/^ClientCode(\d+): (\w\D\S+) (\w\D\S+) (\d)/);
 						console.log(matches);
 						if (matches != null && matches[1] == "001" && matches[2] == "orator") {
 							switch (matches[3]) {
@@ -107,6 +112,7 @@
 						}
 					};
 					socket.onopen = function (ee) {
+						window.state.setState(0);
 						alert("Verbingund hergestellt");
 					};
 				}
