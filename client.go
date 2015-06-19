@@ -38,7 +38,7 @@ func (c *client) read() {
 	for {
 		var msg *message
 		if err := c.socket.ReadJSON(&msg); err == nil {
-			msg.Time = time.Now()
+			msg.Time = time.Now().Local().Format(time.Kitchen)
 			msg.Name = c.userData["name"].(string)
 			c.room.forward <- msg
 		} else {

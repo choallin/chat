@@ -5,7 +5,7 @@ import "time"
 type message struct {
 	Message string
 	Name    string
-	Time    time.Time
+	Time    string
 }
 
 func NewMessageUserData(userData map[string]interface{}) *message {
@@ -13,7 +13,7 @@ func NewMessageUserData(userData map[string]interface{}) *message {
 	if name, ok := userData["name"].(string); ok {
 		msg.Message = "Code001 " + name
 		msg.Name = "server.socket"
-		msg.Time = time.Now()
+		msg.Time = time.Now().Local().Format(time.Kitchen)
 		return msg
 	}
 	return nil

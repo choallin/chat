@@ -52,7 +52,7 @@ func (r *room) run() {
 			msg := new(message)
 			msg.Name = "server.socket"
 			msg.Message = "Code002 " + client.userData["name"].(string)
-			msg.Time = time.Now()
+			msg.Time = time.Now().Local().Format(time.Kitchen)
 			fmt.Println("Neuer client: %v", client)
 			fmt.Println("Nachricht: %v", msg)
 			r.clients[client] = true
@@ -131,7 +131,7 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	allUsers := r.allUsers()
 
 	msg.Message = "Code003 " + strings.Join(allUsers, ";")
-	msg.Time = time.Now()
+	msg.Time = time.Now().Local().Format(time.Kitchen)
 	client.send <- msg
 	defer func() { r.leave <- client }()
 	go client.write()
