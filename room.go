@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -39,6 +40,7 @@ func (r *room) allUsers() (users []string) {
 }
 
 func (r *room) run() {
+	clientCode := regexp.MustCompile(`^ClientCode(\d){3}: (\w+) `)
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
@@ -65,7 +67,21 @@ func (r *room) run() {
 				client.send <- msg
 			}
 		case msg := <-r.forward:
+			fmt.Println("Message: %v", msg)
 			for client := range r.clients {
+				matches := clientCode.FindStringSubmatch(msg.Message)
+				if len(matches) > 0 {
+					group := matches[1]
+					fmt.Println("RegExp Match: %v", matches)
+					switch group {
+					case "1":
+						if client.userData["name"] != matches[2] {
+							fmt.Println("Nur %s ist erlaubt", matches[2])
+							continue
+						}
+					}
+				}
+				fmt.Println("Client: %v", client.userData["name"])
 				select {
 				case client.send <- msg:
 

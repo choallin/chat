@@ -33,7 +33,7 @@
 	</head>
 	<body>
 	<form class="chat-form" action="post" id="chatbox">
-		<button id="orator-button" class="orator-button centered">Video bereit machen</button>
+		<button id="orator-button" class="orator-button centered"></button>
 	</form>
 		<script type="text/javascript" src="/js/jquery.min.js"></script>
 		<script type="text/javascript">
@@ -52,25 +52,62 @@
 						return false;
 					}
 					socket.send(JSON.stringify({"Message": "REDNER: Bereit machen ein Video abzuspielen!"}) );
-					$("#orator-button").text("Nachricht verschickt!!").addClass("red-font");
-					setTimeout(function () {
-						$("#orator-button").text("Video bereit machen").removeClass("red-font");
-					}, 3000);
+					window.state.setState(2);
 					return false;
 				});
 				if (!window["WebSocket"]) {
 					alert("Fehler: Der Browser unterstützt keine Websockets");
 				} else {
 					socket = new WebSocket("ws://{{.Host}}/room");
+					window.state =  {
+						_state : 0,
+						_button: $("#orator-button"),
+						setState: function (state) {
+							this._state = state;
+							this._stateMaschine();
+						},
+						_stateMaschine: function () {
+							switch(parseInt(this._state)) {
+								case 1:
+									console.log("State 1");
+									this._button.text("Video bereit").removeAttr("disabled");
+									break;
+								case 2:
+									console.log("State 2");
+									this._button.text("Start Info erteilt").addClass("red-font").prop("disabled", "disabled");
+									// this is in setTimeout different so have to save it in the "closure" variable
+									var self = this;
+									window.setTimeout(function() {
+										self.setState(0);
+									}, 3000);
+									break;
+								default:
+									console.log("default");
+									this._button.prop("disabled", "disabled").text("").removeClass("red-font");
+									break;
+							}
+						},
+					};
 					socket.onclose = function () {
 						alert("Verbindung zum Chatserver unterbrochen");
 					};
 					socket.onmessage = function (event) {
-						console.log(event);
+						var msg = eval("("+event.data+")");
+						console.log(msg);
+						// https://regex101.com/r/fQ3uU0/1
+						matches = msg.Message.match(/^\w\D+(\d+): (\w\D\S+) (\w\D\S+) (\d)/);
+						console.log(matches);
+						if (matches != null && matches[1] == "001" && matches[2] == "orator") {
+							switch (matches[3]) {
+							case "Status":
+								window.state.setState(matches[4]);
+								break;
+							}
+						}
 					};
 					socket.onopen = function (ee) {
 						alert("Verbingund hergestellt");
-					}
+					};
 				}
 			});
 		</script>
