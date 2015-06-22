@@ -219,7 +219,8 @@
 							// to go to the end of the chat entries:
 							$(".chat-items").animate({ scrollTop: $(document).height() }, "slow");
 							// Will not work, if other cookies will be added
-							if ("auth="+msg.Name != document.cookie) {
+							var cookieValue = document.cookie.split("; auth=");
+							if (cookieValue[1] != msg.Name && "auth="+msg.Name != document.cookie) {
 								if (typeof ( window.Notification) === "function" ) {
 									var newNotification = new Notification("Neue Chatnachricht von "+msg.Name+": "+msg.Message);
 								} else {
