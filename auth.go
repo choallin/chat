@@ -29,13 +29,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(resp)
 		return
-	} else if r.PostFormValue("login") == "orator" && r.PostFormValue("password") == "nico" {
+	} else if r.PostFormValue("login") == "pult" && r.PostFormValue("password") == "nico" {
 		http.SetCookie(w, &http.Cookie{
 			Name:  "auth",
 			Value: r.PostFormValue("login"),
 			Path:  "/",
 		})
-		resp := []byte("{\"valid\": true, \"location\": \"orator\"}")
+		resp := []byte("{\"valid\": true, \"location\": \"pult\"}")
 		w.WriteHeader(http.StatusOK)
 		w.Write(resp)
 		return

@@ -8,7 +8,7 @@
 			body {
 				background-color: gainsboro;
 			}
-			.orator-button {
+			.pult-button {
 				width: 95%;
 				height: 95%;
 				font-size: 900%;
@@ -33,7 +33,7 @@
 	</head>
 	<body>
 	<form class="chat-form" action="post" id="chatbox">
-		<button id="orator-button" class="orator-button centered"></button>
+		<button id="pult-button" class="pult-button centered"></button>
 	</form>
 		<script type="text/javascript" src="/js/jquery.min.js"></script>
 		<script type="text/javascript">
@@ -61,7 +61,7 @@
 					socket = new WebSocket("ws://{{.Host}}/room");
 					window.state =  {
 						_state : 0,
-						_button: $("#orator-button"),
+						_button: $("#pult-button"),
 						setState: function (state) {
 							this._state = state;
 							this._stateMaschine();
@@ -103,7 +103,7 @@
 						// https://regex101.com/r/fQ3uU0/1
 						var matches = msg.Message.match(/^ClientCode(\d+): (\w\D\S+) (\w\D\S+) (\d)/);
 						console.log(matches);
-						if (matches != null && matches[1] == "001" && matches[2] == "orator") {
+						if (matches != null && matches[1] == "001" && matches[2] == "pult") {
 							switch (matches[3]) {
 							case "Status":
 								window.state.setState(matches[4]);
