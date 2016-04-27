@@ -65,6 +65,7 @@
 			{{ $userName := .UserData.name}}
 			{{ if eq $userName  "regie"}}
 				<button id="state-regie"></button>
+				<button id="state-regie-reset">Status reseten</button>
 			{{ end 	}}
 		</div>
 		<div class="col-md-8 col-sm-9 container">
@@ -235,6 +236,9 @@
 				}
 				$('#state-regie').on('click', function(event) {
 					socket.send(JSON.stringify({"Message": "ClientCode001: pult Status 1"}));
+				});
+				$('#state-regie-reset').on('click', function(event) {
+					socket.send(JSON.stringify({"Message": "ClientCode001: pult Status 0"}));
 				});
 			});
 		</script>

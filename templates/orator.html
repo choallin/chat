@@ -51,7 +51,7 @@
 						alert("Fehler: Keine Socket Verbindung zum Chatserver");
 						return false;
 					}
-					socket.send(JSON.stringify({"Message": "REDNER: Bereit machen ein Video abzuspielen!"}) );
+					socket.send(JSON.stringify({"Message": "REDNER: Video abspielen!"}) );
 					window.state.setState(2);
 					return false;
 				});
